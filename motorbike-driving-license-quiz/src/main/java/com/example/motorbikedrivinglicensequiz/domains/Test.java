@@ -38,7 +38,7 @@ public class Test {
 
   // Thông tin câu hỏi
   @Column(name = "question_text")
-  private String question;
+  private String questionText;
 
   // id câu trả lời của người dùng
   @Column(name = "answer_id")
@@ -48,8 +48,8 @@ public class Test {
   @Column(name = "answer_choices_text")
   private String answerChoicesText;
 
-  // câu trả lời đúng hay sai
-  @Column(name = "is_correct")
-  private Boolean isCorrect;
+  // đề số?
+  @Column(name = "test_number")
+  private int testNumber;
 
 }

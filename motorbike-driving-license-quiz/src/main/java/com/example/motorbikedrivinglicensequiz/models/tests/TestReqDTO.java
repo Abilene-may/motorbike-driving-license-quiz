@@ -1,6 +1,7 @@
 package com.example.motorbikedrivinglicensequiz.models.tests;
 
 import com.example.motorbikedrivinglicensequiz.domains.Question;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,13 +13,18 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TestReqDTO {
+  private Long questionId;
+
   // Thông tin câu hỏi
-  private Question question;
+  private String questionText;
 
-  // id câu trả lời
-  private Long answerChoiceId;
+  // id câu trả lời của người dùng
+  private Long answerId;
 
-  // Nội dung câu trả lời
-  private String answerChoiceText;
+  // Thông tin câu trả lời của người dùng
+  private String answerChoicesText;
+
+  // đề số?
+  private int testNumber;
 
 }

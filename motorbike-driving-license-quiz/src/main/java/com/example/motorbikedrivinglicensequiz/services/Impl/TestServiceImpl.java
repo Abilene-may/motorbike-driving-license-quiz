@@ -1,30 +1,37 @@
 package com.example.motorbikedrivinglicensequiz.services.Impl;
 
 import com.example.motorbikedrivinglicensequiz.domains.Question;
+import com.example.motorbikedrivinglicensequiz.domains.Test;
 import com.example.motorbikedrivinglicensequiz.exceptions.ExceptionUtils;
 import com.example.motorbikedrivinglicensequiz.exceptions.QuizException;
 import com.example.motorbikedrivinglicensequiz.models.tests.AnswerChoicesDTO;
 import com.example.motorbikedrivinglicensequiz.models.tests.QuestionAndAnswerDisplay;
+import com.example.motorbikedrivinglicensequiz.models.tests.TestReqDTO;
 import com.example.motorbikedrivinglicensequiz.repositories.AnswerChoicesRepository;
 import com.example.motorbikedrivinglicensequiz.repositories.QuestionRepositoy;
+import com.example.motorbikedrivinglicensequiz.repositories.TestRepository;
 import com.example.motorbikedrivinglicensequiz.services.TestService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TestServiceImpl implements TestService {
   private final QuestionRepositoy questionRepositoy;
   private final AnswerChoicesRepository answerChoicesRepository;
+  private final TestRepository testRepository;
   public TestServiceImpl(
       @Lazy QuestionRepositoy questionRepositoy,
-      @Lazy AnswerChoicesRepository answerChoicesRepository
+      @Lazy AnswerChoicesRepository answerChoicesRepository,
+      @Lazy TestRepository testRepository
   ){
     super();
     this.questionRepositoy = questionRepositoy;
     this.answerChoicesRepository = answerChoicesRepository;
+    this.testRepository = testRepository;
   }
 
   // Hàm show danh sách các câu hỏi của 1 bài test
@@ -65,5 +72,20 @@ public class TestServiceImpl implements TestService {
     }
 
     return questionAndAnswerDisplay;
+  }
+
+  // Hàm lưu thông tin câu trả lời của user
+  @Override
+  @Transactional
+  public void saveChoicesOfTest(TestReqDTO testReqDTO) throws QuizException {
+    Test test =
+        Test.builder()
+            .questionId(testReqDTO.getQuestionId())
+            .questionText(testReqDTO.getQuestionText())
+            .answerId(testReqDTO.getAnswerId())
+            .answerChoicesText(testReqDTO.getAnswerChoicesText())
+            .testNumber(testReqDTO.getTestNumber())
+            .build();
+    testRepository.save(test);
   }
 }
