@@ -48,6 +48,10 @@ public class Test {
   @Column(name = "answer_choices_text")
   private String answerChoicesText;
 
+  // Đúng hay sai?
+  @Column(name = "is_correct")
+  private Boolean isCorrect;
+
   // đề số?
   @Column(name = "test_number")
   private int testNumber;

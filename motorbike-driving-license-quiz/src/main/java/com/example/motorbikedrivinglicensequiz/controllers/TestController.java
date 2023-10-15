@@ -46,8 +46,8 @@ public class TestController {
   @PostMapping("/choice-of-test")
   public ResponseEntity<Object> saveChoicesOfTest(@RequestBody TestReqDTO testReqDTO){
     try {
-      testService.saveChoicesOfTest(testReqDTO);
-      return new ResponseEntity<>( HttpStatus.OK);
+      var test = testService.saveChoicesOfTest(testReqDTO);
+      return new ResponseEntity<>(test, HttpStatus.OK);
     } catch (QuizException e) {
       log.error(e.getMessage(), e);
       return new ResponseEntity<>(

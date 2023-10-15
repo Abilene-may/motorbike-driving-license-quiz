@@ -1,5 +1,7 @@
 package com.example.motorbikedrivinglicensequiz.services;
 
+import com.example.motorbikedrivinglicensequiz.domains.Test;
+import com.example.motorbikedrivinglicensequiz.domains.TestResults;
 import com.example.motorbikedrivinglicensequiz.exceptions.QuizException;
 import com.example.motorbikedrivinglicensequiz.models.tests.QuestionAndAnswerDisplay;
 import com.example.motorbikedrivinglicensequiz.models.tests.TestReqDTO;
@@ -10,6 +12,8 @@ public interface TestService {
   List<QuestionAndAnswerDisplay> testDisplay() throws QuizException;
 
   // Lưu thông tin câu trả lời của người làm bài test
-  void saveChoicesOfTest(TestReqDTO testReqDTO) throws QuizException;
+  Test saveChoicesOfTest(TestReqDTO testReqDTO) throws QuizException;
 
+  // Hiển thị bảng kết quả cuối bài test
+  TestResults resultsOfTest() throws QuizException;
 }
