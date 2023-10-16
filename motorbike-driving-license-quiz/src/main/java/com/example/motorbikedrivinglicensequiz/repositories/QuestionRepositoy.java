@@ -11,7 +11,8 @@ import org.springframework.stereotype.Repository;
 public interface QuestionRepositoy extends JpaRepository<Question, Long>,
     JpaSpecificationExecutor<Question> {
 
-  @Query(value = "select * from question where test_number = :randomNumber", nativeQuery = true)
+  @Query(value = "select * from question where test_number = :randomNumber order by question_id ",
+      nativeQuery = true)
   List<Question> getAllByTestNumber(Integer randomNumber);
 
   @Query(value = "select distinct test_number from question", nativeQuery = true)

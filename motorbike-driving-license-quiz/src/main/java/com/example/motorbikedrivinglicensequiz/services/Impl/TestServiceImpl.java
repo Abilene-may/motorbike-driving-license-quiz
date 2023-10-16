@@ -8,13 +8,14 @@ import com.example.motorbikedrivinglicensequiz.exceptions.ExceptionUtils;
 import com.example.motorbikedrivinglicensequiz.exceptions.QuizException;
 import com.example.motorbikedrivinglicensequiz.models.tests.AnswerChoicesDTO;
 import com.example.motorbikedrivinglicensequiz.models.tests.QuestionAndAnswerDisplay;
+import com.example.motorbikedrivinglicensequiz.models.tests.ReviewTest;
 import com.example.motorbikedrivinglicensequiz.models.tests.TestReqDTO;
-import com.example.motorbikedrivinglicensequiz.models.tests.TestResultsDTO;
 import com.example.motorbikedrivinglicensequiz.repositories.AnswerChoicesRepository;
 import com.example.motorbikedrivinglicensequiz.repositories.QuestionRepositoy;
 import com.example.motorbikedrivinglicensequiz.repositories.TestRepository;
 import com.example.motorbikedrivinglicensequiz.repositories.TestResultsRepository;
 import com.example.motorbikedrivinglicensequiz.services.TestService;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -98,12 +99,15 @@ public class TestServiceImpl implements TestService {
   @Override
   @Transactional
   public Test saveChoicesOfTest(TestReqDTO testReqDTO) throws QuizException {
+    // Tìm thông tin câu trả lời để check đúng sai
+    var answerChoices = answerChoicesRepository.findById(testReqDTO.getAnswerId());
     Test test =
         Test.builder()
             .questionId(testReqDTO.getQuestionId())
             .questionText(testReqDTO.getQuestionText())
             .answerId(testReqDTO.getAnswerId())
             .answerChoicesText(testReqDTO.getAnswerChoicesText())
+            .isCorrect(answerChoices.get().getIsCorrect())
             .testNumber(testReqDTO.getTestNumber())
             .build();
     testRepository.save(test);
@@ -117,12 +121,83 @@ public class TestServiceImpl implements TestService {
    * @throws QuizException
    */
   @Override
-  public TestResults resultsOfTest() throws QuizException {
-    // Lấy tổng số câu trả lời đúng và tổng số câu trả lời sai
-    Optional<TestResultsDTO> testResultsDTO = testResultsRepository.countNumberOfCorrectAndIncorrect();
+  @Transactional
+  public TestResults resultsOfTest(int testNumber) throws QuizException {
+    // Lấy tổng số câu trả lời đúng
+    int numberOfCorrect = testRepository.countNumberOfCorrect();
 
+    // Lấy tổng số câu trả lời sai
+    int numberOfIncorrect = testRepository.countNumberOfIncorrect();
 
+    var tests = testRepository.findAll();
+    int total = numberOfCorrect + numberOfIncorrect;
+    // Số điểm bạn nhận được là số câu đúng / tổng số câu
+    String score = String.format("%d/%d", numberOfCorrect, total);
 
-    return null;
+    // Kiểm tra đỗ hay trượt. Nếu >=21 câu đúng thì đỗ
+    Boolean isPass = false;
+    if (numberOfCorrect >= 21) {
+      isPass = true;
+    }
+
+    // Lấy thông tin ngày giờ hiện tại
+    LocalDateTime localDateTime = LocalDateTime.now();
+    TestResults testResults =
+        TestResults.builder()
+            .numberOfCorrect(numberOfCorrect)
+            .numberOfIncorrect(numberOfIncorrect)
+            .score(score)
+            .isPass(isPass)
+            .testNumber(testNumber)
+            .dateAndTime(localDateTime)
+            .build();
+
+    testResultsRepository.save(testResults);
+    return testResults;
+  }
+
+  /**
+   * Hàm trả ra các thông tin để xem lại bài kiểm tra
+   *
+   * @return
+   * @throws QuizException
+   */
+  @Override
+  public List<ReviewTest> reviewTest(int testNumber) throws QuizException {
+    // Lấy thông tin DS câu hỏi với đề tương ứng
+    List<Question> questionList = questionRepositoy.getAllByTestNumber(testNumber);
+    if(questionList.isEmpty()){
+      throw new QuizException(
+          ExceptionUtils.QUESTION_IS_NOT_AVAILABLE,
+          ExceptionUtils.messages.get(ExceptionUtils.QUESTION_IS_NOT_AVAILABLE));
+    }
+
+    // Lấy thông tin câu trả lời của người dùng
+    var listTestOfUser = testRepository.findAll();
+    // khởi tạo list câu hỏi xem review
+    List<ReviewTest> reviewTests = new ArrayList<>();
+    // Lấy thông tin các lựa chọn của câu trả lời cho câu hỏi
+    int i = 0;
+    for (Question question : questionList) {
+      List<AnswerChoices> answerChoices =
+          answerChoicesRepository.findAllByQuestionId(question.getQuestionId());
+      AnswerChoices correctAnswer = answerChoices.stream()
+          .filter(answer -> Boolean.TRUE.equals(answer.getIsCorrect()))
+          .findFirst()
+          .orElse(null);
+      // Đáp án của người dùng chọn
+      var test = listTestOfUser.get(i);
+      ReviewTest display = ReviewTest.builder().questionText(question.getQuestionText())
+          .answerChoices(answerChoices)
+          .answerText(test.getAnswerChoicesText())
+          .isCorrect(test.getIsCorrect())
+          .correctAnswer(correctAnswer.getAnswerText()).build();
+      reviewTests.add(i, display);
+      i++;
+    }
+
+  // xóa sạch thông tin đã lưu của bài kiểm tra trong bảng test
+    testRepository.deleteAll(listTestOfUser);
+    return reviewTests;
   }
 }

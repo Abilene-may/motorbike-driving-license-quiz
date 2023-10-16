@@ -24,6 +24,9 @@ public class TestReqDTO {
   // Thông tin câu trả lời của người dùng
   private String answerChoicesText;
 
+  // đúng hay sai
+  private Boolean isCorrect;
+
   // đề số?
   private int testNumber;
 

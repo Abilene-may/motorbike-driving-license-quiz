@@ -18,4 +18,10 @@ public interface AnswerChoicesRepository extends JpaRepository<AnswerChoices, Lo
               + "where ac.question_id = :questionId",
       nativeQuery = true)
   List<AnswerChoicesDTO> getAllByQuestionId(Long questionId);
+
+  @Query(
+      value =
+          "select * from answer_choices where question_id = :questionId",
+      nativeQuery = true)
+  List<AnswerChoices> findAllByQuestionId(Long questionId);
 }

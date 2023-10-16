@@ -49,7 +49,11 @@ public class TestResults {
   @Column(name = "is_pass")
   private Boolean isPass;
 
-  // Thời gian làm bài
+  // Đề số
+  @Column(name = "test_number")
+  private int testNumber;
+
+  // ngày và giờ hiển thị bảng kết quả
   @Column(name = "date_and_time")
   private LocalDateTime dateAndTime;
 
