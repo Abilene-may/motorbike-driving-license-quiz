@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -76,8 +77,8 @@ public class TestController {
    *
    * @return
    */
-  @GetMapping("/show-test-results")
-  public ResponseEntity<Object> showTestResults(@RequestParam int testNumber){
+  @GetMapping("/show-test-results/{testNumber}")
+  public ResponseEntity<Object> showTestResults(@PathVariable int testNumber){
     try {
       var testResults = testService.resultsOfTest(testNumber);
       return new ResponseEntity<>(testResults, HttpStatus.OK);
@@ -93,8 +94,8 @@ public class TestController {
     }
   }
 
-  @GetMapping("/review-test")
-  public ResponseEntity<Object> reviewTest(@RequestParam int testNumber){
+  @GetMapping("/review-test/{testNumber}")
+  public ResponseEntity<Object> reviewTest(@PathVariable int testNumber){
     try {
       var reviewTests = testService.reviewTest(testNumber);
       return new ResponseEntity<>(reviewTests, HttpStatus.OK);
