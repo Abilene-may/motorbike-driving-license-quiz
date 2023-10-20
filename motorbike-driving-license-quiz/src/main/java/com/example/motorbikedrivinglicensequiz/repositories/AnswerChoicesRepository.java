@@ -14,7 +14,8 @@ public interface AnswerChoicesRepository extends JpaRepository<AnswerChoices, Lo
 
   @Query(
       value =
-          "select ac.answer_id as answerId, ac.answer_text as answerText, ac.question_id as questionId from answer_choices as ac\n"
+          "select ac.answer_id as answerId, ac.answer_text as answerText, ac.question_id as questionId "
+              + ", ac.is_correct as isCorrect from answer_choices as ac\n"
               + "where ac.question_id = :questionId",
       nativeQuery = true)
   List<AnswerChoicesDTO> getAllByQuestionId(Long questionId);

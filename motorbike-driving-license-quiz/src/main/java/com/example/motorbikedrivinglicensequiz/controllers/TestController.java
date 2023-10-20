@@ -1,10 +1,11 @@
 package com.example.motorbikedrivinglicensequiz.controllers;
 
+import com.example.motorbikedrivinglicensequiz.domains.Test;
 import com.example.motorbikedrivinglicensequiz.exceptions.ExceptionUtils;
 import com.example.motorbikedrivinglicensequiz.exceptions.QuizException;
 import com.example.motorbikedrivinglicensequiz.models.common.ErrorDTO;
-import com.example.motorbikedrivinglicensequiz.models.tests.TestReqDTO;
 import com.example.motorbikedrivinglicensequiz.services.TestService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin("*")
@@ -52,13 +52,13 @@ public class TestController {
   /**
    * API gửi đáp án người dùng đã chọn
    *
-   * @param testReqDTO
+   * @param tests
    * @return
    */
   @PostMapping("/choice-of-test")
-  public ResponseEntity<Object> saveChoicesOfTest(@RequestBody TestReqDTO testReqDTO){
+  public ResponseEntity<Object> saveChoicesOfTest(@RequestBody List<Test> tests){
     try {
-      var test = testService.saveChoicesOfTest(testReqDTO);
+      var test = testService.saveChoicesOfTest(tests);
       return new ResponseEntity<>(test, HttpStatus.OK);
     } catch (QuizException e) {
       log.error(e.getMessage(), e);

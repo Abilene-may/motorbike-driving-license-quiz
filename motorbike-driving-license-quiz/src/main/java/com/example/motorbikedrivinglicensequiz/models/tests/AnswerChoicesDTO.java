@@ -9,4 +9,6 @@ public interface AnswerChoicesDTO {
 
   // id của câu hỏi liên quan
   Long getQuestionId();
+
+  Boolean getIsCorrect();
 }

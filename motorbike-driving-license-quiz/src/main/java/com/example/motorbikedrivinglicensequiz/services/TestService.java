@@ -13,7 +13,7 @@ public interface TestService {
   List<QuestionAndAnswerDisplay> testDisplay() throws QuizException;
 
   // Lưu thông tin câu trả lời của người làm bài test
-  Test saveChoicesOfTest(TestReqDTO testReqDTO) throws QuizException;
+  List<Test> saveChoicesOfTest(List<Test> tests) throws QuizException;
 
   // Hiển thị bảng kết quả cuối bài test
   TestResults resultsOfTest(int testNumber) throws QuizException;

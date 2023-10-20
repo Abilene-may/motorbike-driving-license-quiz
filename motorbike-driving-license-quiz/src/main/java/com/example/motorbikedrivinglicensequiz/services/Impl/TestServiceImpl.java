@@ -92,26 +92,15 @@ public class TestServiceImpl implements TestService {
   /**
    * Hàm lưu thông tin câu trả lời của user
    *
-   * @param testReqDTO
+   * @param tests
    * @return
    * @throws QuizException
    */
   @Override
   @Transactional
-  public Test saveChoicesOfTest(TestReqDTO testReqDTO) throws QuizException {
-    // Tìm thông tin câu trả lời để check đúng sai
-    var answerChoices = answerChoicesRepository.findById(testReqDTO.getAnswerId());
-    Test test =
-        Test.builder()
-            .questionId(testReqDTO.getQuestionId())
-            .questionText(testReqDTO.getQuestionText())
-            .answerId(testReqDTO.getAnswerId())
-            .answerChoicesText(testReqDTO.getAnswerChoicesText())
-            .isCorrect(answerChoices.get().getIsCorrect())
-            .testNumber(testReqDTO.getTestNumber())
-            .build();
-    testRepository.save(test);
-    return test;
+  public List<Test> saveChoicesOfTest(List<Test> tests) throws QuizException {
+      testRepository.saveAll(tests);
+    return tests;
   }
 
   /**
