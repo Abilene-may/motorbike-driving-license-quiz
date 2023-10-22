@@ -8,6 +8,7 @@ import com.example.motorbikedrivinglicensequiz.exceptions.ExceptionUtils;
 import com.example.motorbikedrivinglicensequiz.exceptions.QuizException;
 import com.example.motorbikedrivinglicensequiz.models.tests.AnswerChoicesDTO;
 import com.example.motorbikedrivinglicensequiz.models.tests.QuestionAndAnswerDisplay;
+import com.example.motorbikedrivinglicensequiz.models.tests.ReviewAndResultsTable;
 import com.example.motorbikedrivinglicensequiz.models.tests.ReviewTest;
 import com.example.motorbikedrivinglicensequiz.models.tests.TestReqDTO;
 import com.example.motorbikedrivinglicensequiz.repositories.AnswerChoicesRepository;
@@ -111,7 +112,7 @@ public class TestServiceImpl implements TestService {
    */
   @Override
   @Transactional
-  public TestResults resultsOfTest(int testNumber) throws QuizException {
+  public ReviewAndResultsTable resultsOfTest(int testNumber) throws QuizException {
     // Lấy tổng số câu trả lời đúng
     int numberOfCorrect = testRepository.countNumberOfCorrect();
 
@@ -140,9 +141,14 @@ public class TestServiceImpl implements TestService {
             .testNumber(testNumber)
             .dateAndTime(localDateTime)
             .build();
-
     testResultsRepository.save(testResults);
-    return testResults;
+    var reviewTests = this.reviewTest(testNumber);
+    ReviewAndResultsTable reviewAndResultsTable =
+        ReviewAndResultsTable.builder()
+            .testResults(testResults)
+            .reviewTestList(reviewTests)
+            .build();
+    return reviewTests;
   }
 
   /**
@@ -176,11 +182,15 @@ public class TestServiceImpl implements TestService {
           .orElse(null);
       // Đáp án của người dùng chọn
       var test = listTestOfUser.get(i);
+      var answerText = correctAnswer.getAnswerText();
+      if(answerText.equals(null)){
+        answerText = String.valueOf(false);
+      }
       ReviewTest display = ReviewTest.builder().questionText(question.getQuestionText())
           .answerChoices(answerChoices)
           .answerText(test.getAnswerChoicesText())
           .isCorrect(test.getIsCorrect())
-          .correctAnswer(correctAnswer.getAnswerText()).build();
+          .correctAnswer(answerText).build();
       reviewTests.add(i, display);
       i++;
     }
