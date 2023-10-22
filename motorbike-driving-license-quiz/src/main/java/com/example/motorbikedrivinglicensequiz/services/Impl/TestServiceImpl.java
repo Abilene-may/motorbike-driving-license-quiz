@@ -148,7 +148,7 @@ public class TestServiceImpl implements TestService {
             .testResults(testResults)
             .reviewTestList(reviewTests)
             .build();
-    return reviewTests;
+    return reviewAndResultsTable;
   }
 
   /**
@@ -182,15 +182,11 @@ public class TestServiceImpl implements TestService {
           .orElse(null);
       // Đáp án của người dùng chọn
       var test = listTestOfUser.get(i);
-      var answerText = correctAnswer.getAnswerText();
-      if(answerText.equals(null)){
-        answerText = String.valueOf(false);
-      }
       ReviewTest display = ReviewTest.builder().questionText(question.getQuestionText())
           .answerChoices(answerChoices)
           .answerText(test.getAnswerChoicesText())
           .isCorrect(test.getIsCorrect())
-          .correctAnswer(answerText).build();
+          .correctAnswer(correctAnswer.getAnswerText()).build();
       reviewTests.add(i, display);
       i++;
     }
